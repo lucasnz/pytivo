@@ -76,6 +76,10 @@ def transcode(isQuery, inFile, outFile, tsn='', mime='', thead=''):
     settings += select_format(tsn, mime)
 
     settings = ' '.join(settings).split()
+    vfilter = select_videofilter(inFile)
+    if vfilter:
+        settings = vfilter + settings
+
     if isQuery:
         return settings
 
@@ -328,6 +332,46 @@ def select_videocodec(inFile, tsn, mime=''):
         codec += ['mpeg2video', '-pix_fmt', 'yuv420p']  # default
     return codec
 
+def select_videofilter(inFile):
+    vInfo = video_info(inFile)
+    subfile = vInfo.get('subFile')
+
+    #first select a subFile in the metadata.txt file
+    #then select the subFile with the same filename as the video file (video file: video.mpg, subFile: video.mpg.srt)
+    #else if the video has embedded subtitles, use them
+    if subfile and os.path.exists(os.path.join(os.path.split(inFile)[0], subfile)):
+        subfile = os.path.join(os.path.split(inFile)[0], subfile)
+    elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')):
+        os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')
+    elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')):
+        os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')
+    elif vInfo.get('subType'):
+        #TODO need to look at handling when there is more than one subtitle track
+        subfile = inFile
+
+    if subfile:
+        if subfile == inFile:
+            subType = vInfo.get('subType')
+        else:
+            sInfo = video_info(subfile)
+            subType = sInfo.get('subType')
+            logger.info('sInfo: %s' % sInfo)
+
+        #escape ffmpeg special characters
+        #not sure how to escape ' - currently can't support files with this character in the path
+        subfile_escape = re.sub(r'([\\\[\]\:@;,])', r'\\\1', subfile)
+
+        if subType == 'subrip':
+            vfilter = ['-vf', 'subtitles=\\\'%s\\\'' % subfile_escape]
+            logger.info('video filter: %s' % vfilter)
+            return vfilter
+        elif subType == 'ass':
+            vfilter = ['-vf', 'ass=\\\'%s\\\'' % subfile_escape]
+            logger.info('video filter: %s' % vfilter)
+            return vfilter
+
+    return False
+
 def select_videobr(inFile, tsn, mime=''):
     return ['-b:v', str(select_videostr(inFile, tsn, mime) / 1000) + 'k']
 
@@ -537,6 +581,11 @@ def select_aspect(inFile, tsn = ''):
 def tivo_compatible_video(vInfo, tsn, mime=''):
     message = (True, '')
     while True:
+        if select_videofilter(vInfo.get('fname')):
+            message = (False, 'Subtitle hard-coding requires reencoding')
+
+            break
+
         codec = vInfo.get('vCodec', '')
         is4k = config.is4Ktivo(tsn) and codec == 'hevc'
         if mime == 'video/mp4':
@@ -752,6 +801,7 @@ def video_info(inFile, cache=True):
             debug('CACHE HIT! %s' % inFile)
             return info_cache[inFile][1]
 
+    vInfo['fname'] = inFile
     vInfo['Supported'] = True
 
     ffmpeg_path = config.get_bin('ffmpeg')
@@ -800,6 +850,7 @@ def video_info(inFile, cache=True):
              'aKbps': r'.*Audio: .+, (.+) (?:kb/s).*',     # audio bitrate
              'aCodec': r'.*Audio: ([^, ]+)',             # audio codec
              'aFreq': r'.*Audio: .+, (.+) (?:Hz).*',       # audio frequency
+             'subType': r'.*Subtitle: ([a-zA-Z]+)',       # subtitle type
              'mapVideo': r'([0-9]+[.:]+[0-9]+).*: Video:.*'}  # video mapping
 
     for attr in attrs:
@@ -977,6 +1028,8 @@ def video_info(inFile, cache=True):
                 vInfo[key.replace('Override_', '')] = int(data[key])
             else:
                 vInfo[key.replace('Override_', '')] = data[key]
+        elif key.lower() == 'subfile':
+            vInfo['subFile'] = data[key]
 
     if cache:
         info_cache[inFile] = (mtime, vInfo)
