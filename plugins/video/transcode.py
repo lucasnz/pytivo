@@ -334,6 +334,11 @@ def select_videocodec(inFile, tsn, mime=''):
 
 def select_videofilter(inFile):
     vInfo = video_info(inFile)
+    #legacy subtitle support to be removed
+    subtitles = vInfo.get('subtitles')
+    if subtitles:
+        return ['-vf', subtitles]
+
     subfile = vInfo.get('subFile')
 
     #first select a subFile in the metadata.txt file
@@ -1028,6 +1033,9 @@ def video_info(inFile, cache=True):
                 vInfo[key.replace('Override_', '')] = int(data[key])
             else:
                 vInfo[key.replace('Override_', '')] = data[key]
+        #legacy subtitle support to be removed
+        elif key.lower() == 'subtitles':
+            vInfo['subtitles'] = data[key]
         elif key.lower() == 'subfile':
             vInfo['subFile'] = data[key]
 
