@@ -42,6 +42,7 @@ VIDEO_FORMATS_TS = """<?xml version="1.0" encoding="utf-8"?>
 BASE_HTML = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
 "http://www.w3.org/TR/html4/strict.dtd">
 <html> <head><title>pyTivo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" type="text/css" href="/main.css">
 </head> <body> %s </body> </html>"""
 
@@ -335,13 +336,13 @@ class TivoHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         t.admin = ''
 
         if config.get_server('tivo_mak') and config.get_server('togo_path'):
-            t.togo = '<br>Pull from TiVos:<br>'
+            t.togo = 'Pull from TiVos:<br>'
         else:
             t.togo = ''
 
         if (config.get_server('tivo_username') and
             config.get_server('tivo_password')):
-            t.shares = '<br>Push from video shares:<br>'
+            t.shares = 'Push from video shares:<br>'
         else:
             t.shares = ''
 

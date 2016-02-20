@@ -3,11 +3,24 @@
 <html>
 <head>
 <title>pyTivo - Push</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" type="text/css" href="/main.css">
 </head>
 <body>
 #set $folders = $name.split('/')
 <form action="/TiVoConnect" method="POST">
+<script language="JavaScript">
+<!--
+function toggle(source) {
+	var checkboxes = document.getElementsByName('File');
+	for (var i = 0; i < checkboxes.length; i++) {
+		if (typeof(checkboxes[i].checked) != "undefined") {
+			checkboxes[i].checked = source.checked;
+			}
+	}
+}
+-->
+</script>
 <p id="titlep"><span id="title">
 <a href="/">pyTivo</a> /
 #if len($folders) > 1
@@ -26,33 +39,62 @@ Push from $folders[0]
 #end if
 </span></p>
 <table id="main">
+  ## Header Row
+	<tr class="header">
+        #set $arrowicon = 'updownarrow'
+        #set sortorder = 'Normal'
+        #if $sortby == '!normal'
+            #set $arrowicon = 'downarrow'
+        #end if
+        #if $sortby == 'normal'
+            #set sortorder = '!Normal'
+            #set $arrowicon = 'uparrow'
+        #end if
+        <td class="$arrowicon" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html';">
+            <span class="icon" style="float:left;"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></span>
+            <span class="prog"><a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Title</a></span>
+        </td>
+		<td class="progsizeheader">Size</td>
+        #set $arrowicon = 'updownarrow'
+        #set sortorder = 'CaptureDate'
+        #if $sortby == '!capturedate'
+            #set $arrowicon = 'downarrow'
+        #end if
+        #if $sortby == 'capturedate'
+            #set $sortorder = '!CaptureDate'
+            #set $arrowicon = 'uparrow'
+        #end if
+		<td class="$arrowicon" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html';">
+            <a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Capture Date</a>
+        </td>
+	</tr>
   #set $i = 0
   ## i variable is used to alternate colors of row
   ## loop through passed data printing row for each show or folder
   #for $video in $videos
 	  #set $i += 1
 	  #set $j = $i%2
-	  <tr class="row$(j)">
 	  #if $video.is_dir
-	    ## This is a folder
-		<td></td>
-		<td><img src="/folder.png" alt=""></td>
-		<td class="progmain"><a href="/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html">$video.title</a></td>
+        ## This is a folder
+        <tr class="row$(j) pointer" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html';">
+		<td class="progmain">
+            <span class="icon"><img src="/folder.png" alt=""></span>
+            <span><a href="/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html">$video.title</a></span>
+        </td>
 		<td class="progsize">$video.total_items Items</td>
 		<td class="progdate">$video.textDate</td>
 	  #else
 	    ## This is a show
-		<td>
-            <input type="checkbox" name="File" value="$video.part_path">
-		</td>
-        <td></td>
+        <tr class="row$(j)">
 		<td class="progmain">
+            <span class="icon"><input type="checkbox" name="File" value="$video.part_path"></span>
 			#if $video.episodeTitle
-			<span class="progtitle">$video.title: $video.episodeTitle</span>
+			<span class="progtitle">$video.title: $video.episodeTitle</span><br>
 			#else
-			<span class="progtitle">$video.title</span>
+			<span class="progtitle">$video.title</span><br>
 			#end if
-			<span class="progdesc">
+			<span class="icon"></span>
+            <span class="progdesc">
             #if $video.description
 			$video.description
 			#end if

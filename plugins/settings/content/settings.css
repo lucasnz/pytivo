@@ -8,13 +8,31 @@ html, body {
 
 table#main {
     height: 85%;
-    text-align: left;
+    width: 98%;
     margin-left: auto;
-    margin-right: auto
+    margin-right: auto;
+    table-layout: fixed;
+    text-align: left;
+}
+
+table.settings {
+    width: 100%;
+}
+
+td.panel1 {
+    width: 200px;
+}
+
+td.panel2 {
+    width: 350px;
+}
+
+td.panel3 {
+
 }
 
 div#settings, div#sidesections {
-    border-left: 1px dotted #999
+    border-left: 1px dotted #999;
 }
 
 td.panel {
@@ -23,35 +41,129 @@ td.panel {
 }
 
 td.ulined {
-    border-bottom: 1px solid #999
+    border-bottom: 1px solid #999;
 }
 
 div#leftframe {
-    width: 200px;
+    width: 100%;
     height: 100%;
-    overflow: hidden
+    overflow: hidden;
 }
 
 div#settings, div#sidesections, div.sett-sect, div.help-sect {
-    width: 350px;
+    width: 100%;
     height: 100%;
-    overflow: auto
+    overflow: auto;
 }
 
 div#leftframe, div.sett-sect {
-    text-align: center
+    text-align: center;
+}
+
+div.add-setting {
+    width: 100%;
+    position: static;
+}
+
+table.add-setting {
+    width: 100%;
 }
 
 div.add-button, div.add-field, div.sett-sect, div.help-sect {
-    position: absolute;
+    position: static;
     left: 0px;
-    top: 0px
+    top: 0px;
 }
 
 div.add-button {
-    width: 100%
+    width: 100%;
 }
 
 div.add-field, div.sett-sect {
-    display: none
+    display: none;
+}
+
+hr {
+    border: 0px;
+    background-color: #999;
+    height: 1px;
+    width: 90%;
+}
+
+/* Smartphones (portrait and landscape) ----------- */
+@media only screen
+and (max-width : 750px) {
+    html, body {
+        margin: 0;
+        padding: 0;
+        border: none;
+        height: auto;
+        overflow: visible;
+    }
+
+    table#main {
+        height: auto;
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        table-layout: fixed;
+    }
+
+    table#main td {
+        display: block;
+    }
+
+    td.panel1 {
+        width: 98%;
+        text-align: center;
+    }
+
+    td.panel2 {
+        width: 98%;
+        text-align: center;
+    }
+
+    td.panel3 {
+        width: 98%;
+    }
+
+    input , select {
+        width: 85%;
+        font-size: large;
+        margin: 5px;
+    }
+
+    div#settings, div#sidesections {
+        border-left: none;
+    }
+
+    td.panel {
+        vertical-align: top;
+        height: auto;
+        border-bottom: 1px dotted #000000;
+    }
+
+    td.ulined {
+        border-bottom: 1px solid #999;
+        font-weight: bold;
+        width: 85%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    div#leftframe {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        overflow: hidden;
+    }
+
+    div#settings, div#sidesections, div.sett-sect, div.help-sect {
+        width: 98%;
+        margin-left: auto;
+        margin-right: auto;
+        height: auto;
+        overflow: visible;
+    }
 }

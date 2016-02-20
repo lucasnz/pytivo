@@ -220,12 +220,22 @@ class Plugin(object):
         def date_sort(x, y):
             return cmp(y.mdate, x.mdate)
 
-        sortby = query.get('SortOrder', ['Normal'])[0]
+        def name_sort_rev(x, y):
+            return cmp(y.name, x.name)
+
+        def date_sort_rev(x, y):
+            return cmp(x.mdate, y.mdate)
+
+        sortby = query.get('SortOrder', ['Normal'])[0].lower()
         if filelist.unsorted or filelist.sortby != sortby:
             if force_alpha:
                 filelist.files.sort(dir_sort)
-            elif sortby == '!CaptureDate':
+            elif sortby == '!capturedate':
                 filelist.files.sort(date_sort)
+            elif sortby == 'capturedate':
+                filelist.files.sort(date_sort_rev)
+            elif sortby == '!normal':
+                filelist.files.sort(name_sort_rev)
             else:
                 filelist.files.sort(name_sort)
 

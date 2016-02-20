@@ -3,10 +3,23 @@
 <html>
 <head>
 <title>pyTivo - ToGo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" type="text/css" href="/main.css">
 </head>
 <body>
 <form action="/TiVoConnect" method="POST">
+<script language="JavaScript">
+<!--
+function toggle(source) {
+	var checkboxes = document.getElementsByName('Url');
+	for (var i = 0; i < checkboxes.length; i++) {
+		if (typeof(checkboxes[i].checked) != "undefined") {
+			checkboxes[i].checked = source.checked;
+			}
+	}
+}
+-->
+</script>
 <p id="titlep"><span id="title">
 <a href="/">pyTivo</a> /
   #if $folder != ''
@@ -36,49 +49,57 @@ Pull from $tname
 	<a href="/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;TiVo=$tivoIP&amp;AnchorItem=$FirstAnchor&amp;AnchorOffset=$Offset&amp;Folder=$quote($folder)">Previous Page</a>
 	</td></tr>
   #end if
+  ## Header Row
+	<tr class="header">
+		<td>
+            <span class="icon" style="float:left;"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></span>
+            <span class="prog">Title</span>
+        </td>
+		<td class="progsizeheader">Size</td>
+		<td>Capture Date</td>
+	</tr>
   #set $i = 0
   ## i variable is used to alternate colors of row
   ## loop through passed data printing row for each show or folder
   #for $row in $data
 	  #set $i += 1
 	  #set $j = $i%2
-	  <tr class="row$(j)">
 	  #if $row['ContentType'].startswith('x-tivo-container')
 	    ## This is a folder
-		<td></td>
-		<td><img src="/folder.png" alt=""></td>
-		<td class="progmain"><a href='/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'>$row['Title'] </a></td>
+	    <tr class="row$(j) pointer" onclick="document.location.href = '/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'">
+		<td class="progmain">
+            <span class="icon"><img src="/folder.png" alt=""></span>
+            <span><a href='/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'>$row['Title'] </a></span>
+        </td>
 		<td class="progsize">$row["TotalItems"] Items</td>
 		<td class="progdate">$row["LastChangeDate"]</td>
 	  #else
 	    ## This is a show
-		<td>
+        <tr class="row$(j)">
+		<td class="progmain">
 		#if 'Url' in $row and not ($row['Url'] in $status and ($status[$row['Url']]['running'] or $status[$row['Url']]['queued'])) and not ('CopyProtected' in $row and $row['CopyProtected'] == 'Yes') and not ('Icon' in $row and $row['Icon'] == 'urn:tivo:image:in-progress-recording')
-			<input type="checkbox" name="Url" value="$row['Url']">
+			<span class="icon"><input type="checkbox" name="Url" value="$row['Url']"></span>
 		#end if
-		</td>
-		<td>
 		#if 'CopyProtected' in $row and $row['CopyProtected'] == 'Yes'
-			<img src="/nocopy.png" alt="">
+			<span><img src="/nocopy.png" alt=""></span>
 		#elif 'Icon' in $row
 		    <!-- Display icons similar to TiVo colored circles -->
 			#if $row['Icon'] == 'urn:tivo:image:expires-soon-recording'
-				<img src="/soon.png" alt="">
+				<span><img src="/soon.png" alt=""></span>
 			#else if $row['Icon'] == 'urn:tivo:image:expired-recording'
-				<img src="/expired.png" alt="">
+				<span><img src="/expired.png" alt=""></span>
 			#else if $row['Icon'] == 'urn:tivo:image:save-until-i-delete-recording'
-				<img src="/kuid.png" alt="">
+				<span><img src="/kuid.png" alt=""></span>
 			#else if $row['Icon'] == 'urn:tivo:image:in-progress-recording'
-				<img src="/recording.png" alt="">
+				<span><img src="/recording.png" alt=""></span>
 			#end if
 		#end if
-		</td>
-		<td class="progmain">
 			#if 'episodeTitle' in $row
-			<span class="progtitle">$row['title']: $row['episodeTitle']</span>
+			<span class="progtitle">$row['title']: $row['episodeTitle']</span><br>
 			#else
-			<span class="progtitle">$row['title']</span>
+			<span class="progtitle">$row['title']</span><br>
 			#end if
+			<span class="icon"></span>
 			<span class="progdesc">#if 'description' in $row
 			$row['description']
 			#end if
@@ -144,11 +165,11 @@ Pull from $tname
  <input type="hidden" name="Container" value="$container">
  <input type="hidden" name="TiVo" value="$tivoIP">
 #if $has_tivodecode
- <input type="checkbox" name="decode">Decrypt with tivodecode<br>
+ <input type="checkbox" checked name="decode">Decrypt with tivodecode<br>
 #end if
- <input type="checkbox" name="save">Save metadata to .txt<br>
+ <input type="checkbox" checked name="save">Save metadata to .txt<br>
 #if $togo_mpegts
- <input type="checkbox" name="ts_format">Transfer as mpeg-ts<br>
+ <input type="checkbox" checked name="ts_format">Transfer as mpeg-ts<br>
 #end if
 </p>
 <p>

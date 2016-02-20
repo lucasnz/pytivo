@@ -21,6 +21,8 @@ import qtfaststart
 import transcode
 from plugin import EncodeUnicode, Plugin, quote
 
+from operator import itemgetter
+
 logger = logging.getLogger('pyTivo.video.video')
 
 SCRIPTDIR = os.path.dirname(__file__)
@@ -442,6 +444,7 @@ class BaseVideo(Plugin):
 
         videos = []
         local_base_path = self.get_local_base_path(handler, query)
+        resort = False
         for f in files:
             video = VideoDetails()
             mtime = f.mdate
@@ -475,6 +478,18 @@ class BaseVideo(Plugin):
                     video['valid'] = True
                     video.update(metadata.basic(f.name, mtime))
 
+                if 'time' in video and video['time'] != '':
+                    if video['time'].lower() == 'oad':
+                        video['time'] = video['originalAirDate']
+                        resort = True
+                    try:
+                        video['captureDate'] = hex(isogm(video['time']))
+                        video['textDate'] = time.strftime('%b %d, %Y', time.localtime(isogm(video['time'])))
+                        resort = True
+                    except:
+                        logger.warning('Bad time format: "' + video['time'] +
+                                       '", using current time')
+
                 if self.use_ts(tsn, f.name):
                     video['mime'] = 'video/x-tivo-mpeg-ts'
                 else:
@@ -488,6 +503,17 @@ class BaseVideo(Plugin):
             t = Template(HTML_CONTAINER_TEMPLATE, filter=EncodeUnicode)
         else:
             t = Template(XML_CONTAINER_TEMPLATE, filter=EncodeUnicode)
+
+        sortby = query.get('SortOrder', ['Normal'])[0].lower()
+        t.sortby = sortby
+        if use_html and resort:
+            if sortby == 'capturedate':
+                logger.info('re-sorting by captureDate, reverse=True')
+                videos.sort(key=itemgetter('captureDate'), reverse=True)
+            elif sortby == '!capturedate':
+                logger.info('re-sorting by captureDate, reverse=False')
+                videos.sort(key=itemgetter('captureDate'), reverse=False)
+
         t.container = handler.cname
         t.name = subcname
         t.total = total
