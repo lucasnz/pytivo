@@ -455,3 +455,17 @@ turned it on, since the settings page will not be available! You'll have
 to remove it from pyTivo.conf with a text editor.
 Example Settings: True/False
 Available In: Server
+
+temp_share
+
+Default Setting: None
+Valid Entries: Share name
+Required: No
+Skill: Moderate
+Description: Sets a temporarily share to store your media content
+that is being remuxed before being sent to your TiVo.  If content exists
+on network share, setting this to a local share on the computer running
+pyTivo will significantly speed up the process. If not set or share is not
+valid pyTivo will use the original path of your media content for temporary storage.
+Example Settings: Videos, Movies, TV Shows, etc.
+Available In: Server
