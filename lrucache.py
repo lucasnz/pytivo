@@ -144,7 +144,8 @@ class LRUCache(object):
             heapify(self.__heap)
         else:
             # size may have been reset, so we loop
-            while len(self.__heap) >= self.size:
+            overage = len(self.__heap) - self.size + 1
+            for i in xrange(overage):
                 lru = heappop(self.__heap)
                 del self.__dict[lru.key]
             node = self.__Node(key, obj, time.time())
@@ -181,7 +182,8 @@ class LRUCache(object):
         object.__setattr__(self, name, value)
         # automagically shrink heap on resize
         if name == 'size':
-            while len(self.__heap) > value:
+            overage = len(self.__heap) - value
+            for i in xrange(overage):
                 lru = heappop(self.__heap)
                 del self.__dict[lru.key]
 
