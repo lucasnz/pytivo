@@ -347,9 +347,9 @@ def select_videofilter(inFile):
     if subfile and os.path.exists(os.path.join(os.path.split(inFile)[0], subfile)):
         subfile = os.path.join(os.path.split(inFile)[0], subfile)
     elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')):
-        os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')
+        subfile = os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')
     elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')):
-        os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')
+        subfile = os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')
     elif vInfo.get('subType'):
         #TODO need to look at handling when there is more than one subtitle track
         subfile = inFile
