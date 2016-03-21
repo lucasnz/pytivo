@@ -443,6 +443,22 @@ the names will.
 Example Settings: On/Off/Auto
 Available In: Server
 
+ts
+
+Mode: select
+Options: Auto/On/Off
+Default Setting: Auto
+Valid Entries: On/Off/Auto
+Required: No
+Description: Should pyTivo use transport stream mode with supported 
+TiVos? On = Send only transport streams; Off = Send only program 
+streams; Auto = Send as-is if compatible, or as transport stream if the 
+source is likely (based on the extension) to be h.264, or program stream 
+otherwise. .TiVo files are sent as-is regardless of this setting (unless 
+the destination TiVo can't handle transport streams.)
+Example Settings: On/Off/Auto
+Available In: Server
+
 nosettings
 
 Mode: checkbox

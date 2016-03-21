@@ -47,6 +47,9 @@ EXTENSIONS = """.tivo .mpg .avi .wmv .mov .flv .f4v .vob .mp4 .m4v .mkv
 .rts .scm .smv .ssm .svi .vdo .vfw .vid .viv .vivo .vp6 .vp7 .vro .webm
 .wm .wmd .wtv .yuv""".split()
 
+LIKELYTS = """.ts .tp .trp .3g2 .3gp .3gp2 .3gpp .m2t .m2ts .mts .mp4
+.m4v .flv .mkv .mov .wtv .dvr-ms .webm""".split()
+
 use_extensions = True
 try:
     assert(config.get_bin('ffmpeg'))
@@ -531,15 +534,19 @@ class BaseVideo(Plugin):
 
     def use_ts(self, tsn, file_path):
         if config.is_ts_capable(tsn):
-            if file_path[-5:].lower() == '.tivo':
+            ext = os.path.splitext(file_path)[1].lower()
+            if ext == '.tivo':
                 try:
                     flag = file(file_path).read(8)
                 except:
                     return False
                 if ord(flag[7]) & 0x20:
                     return True
-            elif config.has_ts_flag():
-                return True
+            else:
+                opt = config.get_ts_flag()
+                if ((opt == 'auto' and ext in LIKELYTS) or
+                    (opt in ['true', 'yes', 'on'])):
+                    return True
 
         return False
 

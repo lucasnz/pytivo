@@ -812,7 +812,7 @@ def video_info(inFile, cache=True):
     ffmpeg_path = config.get_bin('ffmpeg')
     if not ffmpeg_path:
         if os.path.splitext(inFile)[1].lower() not in ['.mpg', '.mpeg',
-                                                       '.vob', '.tivo']:
+                                                       '.vob', '.tivo', '.ts']:
             vInfo['Supported'] = False
         vInfo.update({'millisecs': 0, 'vWidth': 704, 'vHeight': 480,
                       'rawmeta': {}})

@@ -268,11 +268,8 @@ def isHDtivo(tsn):  # TSNs of High Definition TiVos
 def is4Ktivo(tsn):  # TSNs of 4K TiVos
     return bool(tsn[:3] in ('849', '8F9'))
 
-def has_ts_flag():
-    try:
-        return config.getboolean('Server', 'ts')
-    except:
-        return False
+def get_ts_flag():
+    return get_server('ts', 'auto').lower()
 
 def is_ts_capable(tsn):  # tsn's of Tivos that support transport streams
     return bool(tsn and (tsn[0] >= '7' or tsn.startswith('663')))
