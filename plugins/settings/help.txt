@@ -472,18 +472,6 @@ to remove it from pyTivo.conf with a text editor.
 Example Settings: True/False
 Available In: Server
 
-ts
-
-Mode: select
-Options: Off/On
-Default Setting: Off
-Valid Entries: On/Off
-Required: No
-Description: Enables the pull of MPEG-TS files on HD Tivos. This can able
-faster transfers.
-Example Settings: On/Off
-Available In: Server
-
 temp_share
 
 Default Setting: None
