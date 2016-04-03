@@ -52,61 +52,83 @@ Pull from $tname
   ## Header Row
 	<tr class="header">
 		<td>
-            <span class="icon" style="float:left;"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></span>
-            <span class="prog">Title</span>
+            <div class="flex">
+                <div class="icon left"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></div>
+                <div class="right" style="margin-right: 26px;">Title</div>
+            </div>
         </td>
-		<td class="progsizeheader">Size</td>
-		<td>Capture Date</td>
+		<td class="mobilehide">Size</td>
+		<td class="mobilehide">Capture Date</td>
 	</tr>
   #set $i = 0
   ## i variable is used to alternate colors of row
   ## loop through passed data printing row for each show or folder
   #for $row in $data
-	  #set $i += 1
-	  #set $j = $i%2
-	  #if $row['ContentType'].startswith('x-tivo-container')
+      #set $i += 1
+      #set $j = $i%2
+      #if $row['ContentType'].startswith('x-tivo-container')
 	    ## This is a folder
 	    <tr class="row$(j) pointer" onclick="document.location.href = '/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'">
 		<td class="progmain">
-            <span class="icon"><img src="/folder.png" alt=""></span>
-            <span><a href='/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'>$row['Title'] </a></span>
+            <div class="flex">
+                <div class="icon left"><img src="/folder.png" alt=""></div>
+                <div class="right">
+                    <a href='/TiVoConnect?Command=NPL&amp;Container=$quote($container)&amp;Folder=$quote(row["Url"])&amp;TiVo=$tivoIP'>$row['Title']</a>
+                </div>
+            </div>
+            </td>
+		<td class="progsize">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Items:</div>
+                <div class="mobileinline">$row["TotalItems"]</div>
+            </div>
+		</td>
+		<td class="progdate">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Capture Date:</div>
+                <div class="mobileinline">$row["LastChangeDate"]</div>
+            </div>
         </td>
-		<td class="progsize">$row["TotalItems"] Items</td>
-		<td class="progdate">$row["LastChangeDate"]</td>
 	  #else
 	    ## This is a show
         <tr class="row$(j)">
 		<td class="progmain">
-		#if 'Url' in $row and not ($row['Url'] in $status and ($status[$row['Url']]['running'] or $status[$row['Url']]['queued'])) and not ('CopyProtected' in $row and $row['CopyProtected'] == 'Yes') and not ('Icon' in $row and $row['Icon'] == 'urn:tivo:image:in-progress-recording')
-			<span class="icon"><input type="checkbox" name="Url" value="$row['Url']"></span>
-		#end if
-		#if 'CopyProtected' in $row and $row['CopyProtected'] == 'Yes'
-			<span><img src="/nocopy.png" alt=""></span>
-		#elif 'Icon' in $row
-		    <!-- Display icons similar to TiVo colored circles -->
-			#if $row['Icon'] == 'urn:tivo:image:expires-soon-recording'
-				<span><img src="/soon.png" alt=""></span>
-			#else if $row['Icon'] == 'urn:tivo:image:expired-recording'
-				<span><img src="/expired.png" alt=""></span>
-			#else if $row['Icon'] == 'urn:tivo:image:save-until-i-delete-recording'
-				<span><img src="/kuid.png" alt=""></span>
-			#else if $row['Icon'] == 'urn:tivo:image:in-progress-recording'
-				<span><img src="/recording.png" alt=""></span>
-			#end if
-		#end if
-			#if 'episodeTitle' in $row
-			<span class="progtitle">$row['title']: $row['episodeTitle']</span><br>
-			#else
-			<span class="progtitle">$row['title']</span><br>
-			#end if
-			<span class="icon"></span>
-			<span class="progdesc">#if 'description' in $row
-			$row['description']
-			#end if
-			#if 'displayMajorNumber' in $row and 'callsign' in $row
-			$row['displayMajorNumber'] $row['callsign']
-			#end if
-			</span>
+            <div class="flex">
+                <div class="icon left">
+            #if 'Url' in $row and not ($row['Url'] in $status and ($status[$row['Url']]['running'] or $status[$row['Url']]['queued'])) and not ('CopyProtected' in $row and $row['CopyProtected'] == 'Yes') and not ('Icon' in $row and $row['Icon'] == 'urn:tivo:image:in-progress-recording')
+                <input type="checkbox" name="Url" value="$row['Url']">
+            #end if
+            #if 'CopyProtected' in $row and $row['CopyProtected'] == 'Yes'
+                <img src="/nocopy.png" alt="">
+            #elif 'Icon' in $row
+                <!-- Display icons similar to TiVo colored circles -->
+                #if $row['Icon'] == 'urn:tivo:image:expires-soon-recording'
+                    <img src="/soon.png" alt="">
+                #else if $row['Icon'] == 'urn:tivo:image:expired-recording'
+                    <img src="/expired.png" alt="">
+                #else if $row['Icon'] == 'urn:tivo:image:save-until-i-delete-recording'
+                    <img src="/kuid.png" alt="">
+                #else if $row['Icon'] == 'urn:tivo:image:in-progress-recording'
+                    <img src="/recording.png" alt="">
+                #end if
+            #end if
+                </div>
+                <div class="right progtitle">
+            #if 'episodeTitle' in $row
+                $row['title']: $row['episodeTitle']
+            #else
+                $row['title']
+            #end if
+                </div>
+            </div>
+			<div class="progdesc">
+                #if 'description' in $row
+                $row['description']
+                #end if
+                #if 'displayMajorNumber' in $row and 'callsign' in $row
+                $row['displayMajorNumber'] $row['callsign']
+                #end if
+			</div>
 			#if 'Url' in $row and row['Url'] in $status
 				#set $this_status = $status[$row['Url']]
 				#if $this_status['running'] and $this_status['rate'] != ""
@@ -137,19 +159,29 @@ Pull from $tname
 			#end if
 		</td>
 		<td class="progsize">
-                #if 'SourceSize' in $row
-                $row['SourceSize']
-                #end if
-                <br>
-                #if 'Duration' in $row
-		$row['Duration']
-                #end if
+            #if 'SourceSize' in $row
+            <div class="mobileflex">
+            <div class="mobileinline mobileleft">
+                <div class="mobileshow progtitle mobileinline">Size:</div>
+                <div class="mobileinline">$row['SourceSize']</div>
+            </div>
+            #end if
+            #if 'Duration' in $row
+            <div class="mobileinline mobileright">
+                <div class="mobileshow progtitle mobileinline" style="margin-left: 20px;">Duration:</div>
+                <div class="mobileinline">$row['Duration']</div>
+            </div>
+            </div>
+            #end if
 		</td>
 		<td class="progdate">
-                #if 'CaptureDate' in $row
-                $row['CaptureDate']
-                #end if
-                </td>
+            #if 'CaptureDate' in $row
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Capture Date:</div>
+                <div class="mobileinline">$row['CaptureDate']</div>
+            </div>
+            #end if
+        </td>
 	  #end if
 	  </tr>
   #end for

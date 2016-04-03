@@ -50,11 +50,15 @@ Push from $folders[0]
             #set sortorder = '!Normal'
             #set $arrowicon = 'uparrow'
         #end if
-        <td class="$arrowicon" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html';">
-            <span class="icon" style="float:left;"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></span>
-            <span class="prog"><a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Title</a></span>
+        <td class="$arrowicon">
+            <div class="flex">
+                <div class="icon left"><input type="checkbox" name="selectAll" onClick="toggle(this)" Title="Select All" /></div>
+                <div class="right pointer" style="margin-right: 26px; margin-left: 16px;" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html';">
+                    <a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Title</a>
+                </div>
+            </div>
         </td>
-		<td class="progsizeheader">Size</td>
+		<td class="mobilehide">Size</td>
         #set $arrowicon = 'updownarrow'
         #set sortorder = 'CaptureDate'
         #if $sortby == '!capturedate'
@@ -65,7 +69,7 @@ Push from $folders[0]
             #set $arrowicon = 'uparrow'
         #end if
 		<td class="$arrowicon" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html';">
-            <a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Capture Date</a>
+            <div style="margin-left: 16px;"><a href='/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)&amp;SortOrder=$quote($sortorder)&amp;Format=text/html'>Capture Date</a></div>
         </td>
 	</tr>
   #set $i = 0
@@ -78,33 +82,58 @@ Push from $folders[0]
         ## This is a folder
         <tr class="row$(j) pointer" onclick="document.location.href = '/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html';">
 		<td class="progmain">
-            <span class="icon"><img src="/folder.png" alt=""></span>
-            <span><a href="/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html">$video.title</a></span>
+            <div class="flex">
+                <div class="icon left"><img src="/folder.png" alt=""></div>
+                <div class="right">
+                    <a href="/TiVoConnect?Command=QueryContainer&amp;Container=$quote($name)/$quote($video.name)&amp;Format=text/html">$video.title</a>
+                </div>
+            </div>
         </td>
-		<td class="progsize">$video.total_items Items</td>
-		<td class="progdate">$video.textDate</td>
+		<td class="progsize">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Items:</div>
+                <div class="mobileinline">$video.total_items Items</div>
+            </div>
+        </td>
+		<td class="progdate">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Capture Date:</div>
+                <div class="mobileinline">$video.textDate</div>
+            </div>
+        </td>
 	  #else
 	    ## This is a show
         <tr class="row$(j)">
 		<td class="progmain">
-            <span class="icon"><input type="checkbox" name="File" value="$video.part_path"></span>
-			#if $video.episodeTitle
-			<span class="progtitle">$video.title: $video.episodeTitle</span><br>
-			#else
-			<span class="progtitle">$video.title</span><br>
-			#end if
-			<span class="icon"></span>
-            <span class="progdesc">
-            #if $video.description
-			$video.description
-			#end if
-			#if $video.displayMajorNumber and $video.callsign
-			$video.displayMajorNumber $video.callsign
-			#end if
-			</span>
+            <div class="flex">
+                <div class="icon left"><input type="checkbox" name="File" value="$video.part_path"></div>
+                #if $video.episodeTitle
+                <div class="right progtitle">$video.title: $video.episodeTitle</div>
+                #else
+                <div class="right progtitle">$video.title</div>
+                #end if
+            </div>
+            <div class="progdesc">
+                #if $video.description
+                $video.description
+                #end if
+                #if $video.displayMajorNumber and $video.callsign
+                $video.displayMajorNumber $video.callsign
+                #end if
+            </div>
 		</td>
-		<td class="progsize">$video.textSize</td>
-		<td class="progdate">$video.textDate</td>
+		<td class="progsize">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Size:</div>
+                <div class="mobileinline">$video.textSize</div>
+            </div>
+        </td>
+		<td class="progdate">
+            <div class="mobileinline">
+                <div class="mobileshow progtitle mobileinline">Capture Date:</div>
+                <div class="mobileinline">$video.textDate</div>
+            </div>
+        </td>
 	  #end if
 	  </tr>
   #end for
