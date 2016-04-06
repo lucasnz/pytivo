@@ -343,19 +343,16 @@ def select_videofilter(inFile):
 
     #first select a subFile in the metadata.txt file
     #then select the subFile with the same filename as the video file (video file: video.mpg, subFile: video.mpg.srt)
-    #else if the video has embedded subtitles, use them
     if subfile and os.path.exists(os.path.join(os.path.split(inFile)[0], subfile)):
         subfile = os.path.join(os.path.split(inFile)[0], subfile)
     elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')):
         subfile = os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.srt')
     elif os.path.exists(os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')):
         subfile = os.path.join(os.path.split(inFile)[0], os.path.basename(inFile) + '.ass')
-    elif vInfo.get('subType'):
-        #TODO need to look at handling when there is more than one subtitle track
-        subfile = inFile
 
     if subfile:
         if subfile == inFile:
+            #TODO need to look at handling when there is more than one subtitle track
             subType = vInfo.get('subType')
         else:
             sInfo = video_info(subfile)
