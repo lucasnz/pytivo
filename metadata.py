@@ -23,6 +23,7 @@ import turing
 
 # Something to strip
 TRIBUNE_CR = ' Copyright Tribune Media Services, Inc.'
+ROVI_CR = ' Copyright Rovi, Inc.'
 
 TV_RATINGS = {'TV-Y7': 1, 'TV-Y': 2, 'TV-G': 3, 'TV-PG': 4, 'TV-14': 5,
               'TV-MA': 6, 'TV-NR': 7, 'TVY7': 1, 'TVY': 2, 'TVG': 3,
@@ -435,7 +436,9 @@ def from_container(xmldoc):
         data = tag_data(details, keys[key])
         if data:
             if key == 'description':
-                data = data.replace(TRIBUNE_CR, '')
+                data = data.replace(TRIBUNE_CR, '').replace(ROVI_CR, '')
+                if data.endswith(' *'):
+                    data = data[:-2]
             elif key == 'tvRating':
                 data = int(data)
             elif key == 'displayMajorNumber':
@@ -470,7 +473,9 @@ def from_details(xml):
         data = tag_data(showing, items[item])
         if data:
             if item == 'description':
-                data = data.replace(TRIBUNE_CR, '')
+                data = data.replace(TRIBUNE_CR, '').replace(ROVI_CR, '')
+                if data.endswith(' *'):
+                    data = data[:-2]
             metadata[item] = data
 
     vItems = ['vActor', 'vChoreographer', 'vDirector',
