@@ -325,9 +325,9 @@ def select_videocodec(inFile, tsn, mime=''):
         if (mime == 'video/x-tivo-mpeg-ts'):
             org_codec = vInfo.get('vCodec', '')
             if org_codec == 'h264':
-                codec += ['-bsf', 'h264_mp4toannexb']
+                codec += ['-bsf:v', 'h264_mp4toannexb']
             elif org_codec == 'hevc':
-                codec += ['-bsf', 'hevc_mp4toannexb']
+                codec += ['-bsf:v', 'hevc_mp4toannexb']
     else:
         codec += ['mpeg2video', '-pix_fmt', 'yuv420p']  # default
     return codec
